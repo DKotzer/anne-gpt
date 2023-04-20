@@ -41,17 +41,6 @@ export const Navbar: FC<NavbarProps> = ({ mode, setMode }) => {
           Search
         </div>
       </div>
-      <div>
-        <a
-          className='flex items-center hover:opacity-50'
-          href={url}
-          target='_blank'
-          rel='noreferrer'
-        >
-          <div className='hidden sm:flex'>{urlName}</div>
-          <IconExternalLink className='ml-1 hidden sm:flex' size={20} />
-        </a>
-      </div>
     </div>
   );
 };

@@ -243,7 +243,7 @@ export default function Home() {
                 >
                   <IconSend
                     onClick={mode === "search" ? handleSearch : handleAnswer}
-                    className={` absolute chatButton right-2 top-2.5 h-7 w-7 rounded-full buttonColor p-1.5  sm:right-3 sm:top-3 sm:h-9 sm:w-9 text-white `}
+                    className={` absolute chatButton right-2 top-2.5 h-7 w-7 rounded-full p-1.5  sm:right-3 sm:top-3 sm:h-9 sm:w-9 text-white `}
                   />
                 </button>
               </div>
@@ -367,7 +367,6 @@ export default function Home() {
             )}
           </div>
         </div>
-        <Footer />
       </div>
     </>
   );
