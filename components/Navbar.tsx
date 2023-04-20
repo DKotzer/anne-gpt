@@ -11,14 +11,8 @@ export const Navbar: FC<NavbarProps> = ({ mode, setMode }) => {
   const urlName = process.env.NEXT_PUBLIC_URL_NAME;
   const navbarColor = process.env.NEXT_PUBLIC_NAVBAR_COLOR;
   return (
-    <div
-      className={`flex h-[60px] border-b border-gray-300 py-2 px-8 items-center justify-between navbarColor`}
-    >
-      <div className='font-bold text-2xl flex items-center cursor-default'>
-        <a className='hover:opacity-50 navLogo' href='/'>
-          {name}AI
-        </a>
-      </div>
+    <div className={`flex h-[60px]  py-2 px-8 items-center justify-between`}>
+      <div className='font-bold text-2xl flex items-center cursor-default'></div>
       <div className='flex items-center'>
         <div
           className={`${

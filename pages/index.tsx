@@ -206,8 +206,11 @@ export default function Home() {
         <meta property='og:image' content={image} />
       </Head>
 
-      <div className={`flex flex-col h-screen w-screen backgroundColor`}>
+      <div
+        className={`flex flex-col h-screen w-screen backgroundColor items-center justify-center`}
+      >
         <Navbar mode={mode} setMode={setMode} />
+
         <div className='flex-1 overflow-auto w-full scrollDiv'>
           {answer === "" && <img src={image} className='mx-auto mt-6 '></img>}
           <div className='mx-auto flex min-h-content w-full  max-w-[750px] flex-col items-center px-3 '>
