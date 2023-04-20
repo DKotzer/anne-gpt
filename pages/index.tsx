@@ -14,7 +14,9 @@ import { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
+  type ExpandedChunks = { [key: number]: boolean };
 
+  const [expandedChunks, setExpandedChunks] = useState<ExpandedChunks>({});
   const [query, setQuery] = useState<string>("");
   const [chunks, setChunks] = useState<PGChunk[]>([]);
   const [answer, setAnswer] = useState<string>("");
@@ -32,14 +34,12 @@ export default function Home() {
   const title = process.env.NEXT_PUBLIC_TITLE;
   let searchPlaceholder = process.env.NEXT_PUBLIC_SEARCH;
   let askPlaceholder = process.env.NEXT_PUBLIC_ASK;
+  const primaryColor = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#8d1248";
+  const backgroundColor = process.env.NEXT_PUBLIC_BACKGROUND_COLOR ?? "#c4dadb";
+  const navbarColor = process.env.NEXT_PUBLIC_NAVBAR_COLOR ?? "white";
+  const footerColor = process.env.NEXT_PUBLIC_FOOTER_COLOR ?? "white";
 
   useEffect(() => {
-    const primaryColor = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#8d1248";
-    const backgroundColor =
-      process.env.NEXT_PUBLIC_BACKGROUND_COLOR ?? "#c4dadb";
-    const navbarColor = process.env.NEXT_PUBLIC_NAVBAR_COLOR ?? "white";
-    const footerColor = process.env.NEXT_PUBLIC_FOOTER_COLOR ?? "white";
-
     document.documentElement.style.setProperty("--primary-color", primaryColor);
     document.documentElement.style.setProperty(
       "--background-color",
@@ -157,6 +157,13 @@ export default function Home() {
     inputRef.current?.focus();
   };
 
+  const handleExpand = (index: number) => {
+    setExpandedChunks((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       if (mode === "search") {
@@ -212,7 +219,9 @@ export default function Home() {
         <Navbar mode={mode} setMode={setMode} />
 
         <div className='flex-1 overflow-auto w-full scrollDiv'>
-          {answer === "" && <img src={image} className='mx-auto mt-6 '></img>}
+          {chunks.length === 0 && (
+            <img src={image} className='mx-auto mt-6 '></img>
+          )}
           <div className='mx-auto flex min-h-content w-full  max-w-[750px] flex-col items-center px-3 '>
             {true && <div className='w-full sm:w-[355px]'></div>}
 
@@ -222,7 +231,7 @@ export default function Home() {
 
                 <input
                   ref={inputRef}
-                  className='h-12 w-full rounded-3xl border border-zinc-600 pr-12 pl-11 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800 sm:h-16 sm:py-2 sm:pr-16 sm:pl-16 sm:text-lg'
+                  className='h-12 w-full rounded-3xl border border-zinc-600 pr-12 pl-11 focus:border-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-800 focus: sm:h-16 sm:py-2 sm:pr-16 sm:pl-16 sm:text-lg'
                   type='text'
                   placeholder={
                     placeholder !== ""
@@ -291,8 +300,10 @@ export default function Home() {
 
                   {chunks.map((chunk, index) => (
                     <div key={index}>
-                      <div className='mt-4 border bg-white border-zinc-600 rounded-lg p-5 '>
-                        <div className='flex justify-between'>
+                      <div
+                        className={`mt-4 border bg-white ring-pink-900 rounded-lg p-5 hover:ring-2 hover:cursor-pointer chunkCard  `}
+                      >
+                        <div className='flex justify-between items-start'>
                           <div>
                             <div className='font-bold text-xl'>
                               {chunk.essay_title}
@@ -304,7 +315,7 @@ export default function Home() {
                           <div className='topRight relative top-0 right-0'>
                             <div className=' float-right'>
                               <a
-                                className='hover:opacity-50'
+                                className='hover:opacity-50 '
                                 href={chunk.essay_url}
                                 target='_blank'
                                 rel='noreferrer'
@@ -318,8 +329,14 @@ export default function Home() {
                             </div>
                           </div>
                         </div>
-                        <div className='mt-2 w-[98%] mx-auto'>
-                          {chunk.content}
+                        <div
+                          className='mt-2 w-[98%] mx-auto'
+                          onClick={() => handleExpand(index)}
+                        >
+                          {expandedChunks[index]
+                            ? chunk.content
+                            : chunk.content.slice(0, 200) +
+                              (chunk.content.length > 200 ? "..." : "")}
                         </div>
                       </div>
                     </div>
@@ -331,7 +348,9 @@ export default function Home() {
                 <div className='font-bold text-2xl'>Passages</div>
                 {chunks.map((chunk, index) => (
                   <div key={index}>
-                    <div className='mt-4 border bg-white border-zinc-600 rounded-lg p-5'>
+                    <div
+                      className={`mt-4 border bg-white ring-pink-900 rounded-lg p-5 hover:ring-2 hover:cursor-pointer chunkCard  `}
+                    >
                       <div className='flex justify-between items-start'>
                         <div>
                           <div className='font-bold text-xl'>
@@ -358,8 +377,14 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                      <div className='mt-2 w-[98%] mx-auto'>
-                        {chunk.content}
+                      <div
+                        className='mt-2 w-[98%] mx-auto'
+                        onClick={() => handleExpand(index)}
+                      >
+                        {expandedChunks[index]
+                          ? chunk.content
+                          : chunk.content.slice(0, 200) +
+                            (chunk.content.length > 200 ? "..." : "")}
                       </div>
                     </div>
                   </div>
