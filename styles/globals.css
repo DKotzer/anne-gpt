@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #8d1248;
+  --background-color: #c4dadb;
+  --navbar-color: white;
+  --footer-color: white;
+}
+
+.backgroundColor {
+  background-color: var(--background-color);
+}
+
+.navbarColor {
+  background-color: var(--navbar-color);
+}
+
+.footerColor {
+  background-color: var(--navbar-color);
+}
+
+.buttonColor {
+  color: var(--primary-color);
+}
+
+.buttonColor:hover {
+  color: rgba(var(--primary-color), 0.65);
+  transform: scale(1.03);
+}
+
+.navButtonColor {
+  color: var(--primary-color);
+}
+
+.navButtonColor:hover {
+  color: rgba(var(--primary-color), 0.65);
+  transform: scale(1.03);
+}
+
+.navSelectedColor {
+  color: var(--primary-color);
+}
+
+.chatButton {
+  color: var(--background-color);
+  background-color: var(--primary-color);
+}
+
+.navLogo {
+  color: var(--primary-color);
+}
+
+.scrollDiv::-webkit-scrollbar {
+  width: 5px; /* Mostly for vertical scrollbars */
+  height: 10px; /* Mostly for horizontal scrollbars */
+  border-radius: 20px;
+}
+.scrollDiv::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  /* Foreground */
+  background: var(--primary-color);
+}
+.scrollDiv::-webkit-scrollbar-track {
+  /* Background */
+  border-radius: 20px;
+  background: var(--background-color);
+}

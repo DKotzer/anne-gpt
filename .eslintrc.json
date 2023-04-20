@@ -1,0 +1,6 @@
+{
+  "extends": "next/core-web-vitals",
+
+  // Other rules
+  "@next/next/no-html-link-for-pages": "off"
+}
