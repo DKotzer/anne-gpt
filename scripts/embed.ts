@@ -12,10 +12,15 @@ const generateEmbeddings = async (essays: PGEssay[]) => {
   });
   const openai = new OpenAIApi(configuration);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabaseUrl: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey: string | undefined =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Missing Supabase URL or Key")
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
   for (let i = 0; i < essays.length; i++) {
     const section = essays[i];

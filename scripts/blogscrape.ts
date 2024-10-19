@@ -213,7 +213,7 @@ const chunkEssay = async (essay: PGEssay) => {
     }
   }
   const json: PGJSON = {
-    current_date: "2023-04-05",
+    current_date: "2023-10-11",
     author: "Anne Hussain",
     url: "https://annehussain.com/wp-sitemap-posts-post-1.xml",
     length: essays.reduce((acc, essay) => acc + essay.length, 0),
