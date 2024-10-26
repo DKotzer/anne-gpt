@@ -1,65 +1,65 @@
-import { Answer } from "@/components/Answer/Answer";
-import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
-import { PGChunk } from "@/types";
+import { Answer } from "@/components/Answer/Answer"
+import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/Navbar"
+import { PGChunk } from "@/types"
 import {
   IconArrowRight,
   IconExternalLink,
   IconSearch,
   IconSend,
-} from "@tabler/icons-react";
-import endent from "endent";
-import Head from "next/head";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+} from "@tabler/icons-react"
+import endent from "endent"
+import Head from "next/head"
+import { KeyboardEvent, useEffect, useRef, useState } from "react"
 
 export default function Home() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  type ExpandedChunks = { [key: number]: boolean };
+  const inputRef = useRef<HTMLInputElement>(null)
+  type ExpandedChunks = { [key: number]: boolean }
 
-  const [expandedChunks, setExpandedChunks] = useState<ExpandedChunks>({});
-  const [query, setQuery] = useState<string>("");
-  const [chunks, setChunks] = useState<PGChunk[]>([]);
-  const [answer, setAnswer] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [auth, setAuth] = useState<boolean>(true);
-  const [placeholder, setPlaceholder] = useState<string>("");
+  const [expandedChunks, setExpandedChunks] = useState<ExpandedChunks>({})
+  const [query, setQuery] = useState<string>("")
+  const [chunks, setChunks] = useState<PGChunk[]>([])
+  const [answer, setAnswer] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false)
+  const [auth, setAuth] = useState<boolean>(true)
+  const [placeholder, setPlaceholder] = useState<string>("")
 
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [mode, setMode] = useState<"search" | "chat">("chat");
-  const [matchCount, setMatchCount] = useState<number>(5);
+  const [showSettings, setShowSettings] = useState<boolean>(false)
+  const [mode, setMode] = useState<"search" | "chat">("chat")
+  const [matchCount, setMatchCount] = useState<number>(5)
   //load env variables Name, Image, Description, and URL
-  const name = process.env.NEXT_PUBLIC_NAME;
-  const image = process.env.NEXT_PUBLIC_IMAGE;
-  const description = process.env.NEXT_PUBLIC_DESCRIPTION;
-  const title = process.env.NEXT_PUBLIC_TITLE;
-  let searchPlaceholder = process.env.NEXT_PUBLIC_SEARCH;
-  let askPlaceholder = process.env.NEXT_PUBLIC_ASK;
-  const primaryColor = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#8d1248";
-  const backgroundColor = process.env.NEXT_PUBLIC_BACKGROUND_COLOR ?? "#c4dadb";
-  const navbarColor = process.env.NEXT_PUBLIC_NAVBAR_COLOR ?? "white";
-  const footerColor = process.env.NEXT_PUBLIC_FOOTER_COLOR ?? "white";
+  const name = process.env.NEXT_PUBLIC_NAME
+  const image = process.env.NEXT_PUBLIC_IMAGE
+  const description = process.env.NEXT_PUBLIC_DESCRIPTION
+  const title = process.env.NEXT_PUBLIC_TITLE
+  let searchPlaceholder = process.env.NEXT_PUBLIC_SEARCH
+  let askPlaceholder = process.env.NEXT_PUBLIC_ASK
+  const primaryColor = process.env.NEXT_PUBLIC_PRIMARY_COLOR ?? "#8d1248"
+  const backgroundColor = process.env.NEXT_PUBLIC_BACKGROUND_COLOR ?? "#c4dadb"
+  const navbarColor = process.env.NEXT_PUBLIC_NAVBAR_COLOR ?? "white"
+  const footerColor = process.env.NEXT_PUBLIC_FOOTER_COLOR ?? "white"
 
   useEffect(() => {
-    document.documentElement.style.setProperty("--primary-color", primaryColor);
+    document.documentElement.style.setProperty("--primary-color", primaryColor)
     document.documentElement.style.setProperty(
       "--background-color",
       backgroundColor
-    );
-    document.documentElement.style.setProperty("--navbar-color", navbarColor);
-    document.documentElement.style.setProperty("--footer-color", footerColor);
-  }, []);
+    )
+    document.documentElement.style.setProperty("--navbar-color", navbarColor)
+    document.documentElement.style.setProperty("--footer-color", footerColor)
+  }, [])
   // const matchCount = 5;
 
   const handleSearch = async () => {
     if (!query) {
-      alert("Please enter a query.");
-      return;
+      alert("Please enter a query.")
+      return
     }
 
-    setAnswer("");
-    setChunks([]);
+    setAnswer("")
+    setChunks([])
 
-    setLoading(true);
+    setLoading(true)
 
     const searchResponse = await fetch("/api/search", {
       method: "POST",
@@ -67,36 +67,48 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ query, matches: matchCount }),
-    });
+    })
 
     if (!searchResponse.ok) {
-      setLoading(false);
-      throw new Error(searchResponse.statusText);
+      setLoading(false)
+      throw new Error(searchResponse.statusText)
     }
 
-    const results: any = await searchResponse.json();
+    const results: any = await searchResponse.json()
 
-    setChunks(results);
-    console.log("found chunks:", results);
+    setChunks(results)
+    // console.log("found chunks:", results)
 
-    setLoading(false);
+    setLoading(false)
+    await fetch("/api/saveQA", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: query,
+        answer: "Search Query - No Answer",
+      }), // Use the local variable
+    })
 
-    inputRef.current?.focus();
+    setLoading(false)
 
-    return results;
-  };
+    inputRef.current?.focus()
+
+    return results
+  }
 
   const handleAnswer = async () => {
     if (!query) {
-      alert("Please enter a query.");
-      return;
+      alert("Please enter a query.")
+      return
     }
 
-    setAnswer("");
-    setChunks([]);
+    setAnswer("")
+    setChunks([])
 
-    setLoading(true);
-    setPlaceholder(query);
+    setLoading(true)
+    setPlaceholder(query)
 
     const searchResponse = await fetch("/api/search", {
       method: "POST",
@@ -104,22 +116,23 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ query, matches: matchCount }),
-    });
+    })
 
     if (!searchResponse.ok) {
-      setLoading(false);
-      throw new Error(searchResponse.statusText);
+      setLoading(false)
+      console.log("response: ", searchResponse)
+      throw new Error(searchResponse.statusText)
     }
 
-    const results: PGChunk[] = await searchResponse.json();
+    const results: PGChunk[] = await searchResponse.json()
 
-    setChunks(results);
+    setChunks(results)
 
     const prompt = endent`
     Use the following passages to provide an answer to the query: "${query}."
 
     ${results?.map((d: any) => d.content).join("\n\n")}
-    `;
+    `
 
     const answerResponse = await fetch("/api/answer", {
       method: "POST",
@@ -127,75 +140,85 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ prompt }),
-    });
+    })
 
     if (!answerResponse.ok) {
-      setLoading(false);
-      throw new Error(answerResponse.statusText);
+      setLoading(false)
+      throw new Error(answerResponse.statusText)
     }
 
-    const data = answerResponse.body;
+    const data = answerResponse.body
 
     if (!data) {
-      return;
+      return
     }
 
-    setLoading(false);
-    setQuery("");
+    setLoading(false)
+    setQuery("")
 
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
+    const reader = data.getReader()
+    const decoder = new TextDecoder()
+    let done = false
+    let fullAnswer = "" // Initialize a local variable to accumulate the answer outside the loop
 
     while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      const chunkValue = decoder.decode(value);
-      setAnswer((prev) => prev + chunkValue);
+      const { value, done: doneReading } = await reader.read()
+      done = doneReading
+      const chunkValue = decoder.decode(value)
+      setAnswer((prev) => prev + chunkValue)
+      fullAnswer += chunkValue // Accumulate the answer in a local variable
     }
 
-    inputRef.current?.focus();
-  };
+    await fetch("/api/saveQA", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question: query, answer: fullAnswer }), // Use the local variable
+    })
+
+    inputRef.current?.focus()
+  }
 
   const handleExpand = (index: number) => {
     setExpandedChunks((prevState) => ({
       ...prevState,
       [index]: !prevState[index],
-    }));
-  };
+    }))
+  }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       if (mode === "search") {
-        handleSearch();
+        handleSearch()
       } else {
-        handleAnswer();
+        handleAnswer()
       }
     }
-  };
+  }
 
   useEffect(() => {
     if (matchCount > 10) {
-      setMatchCount(10);
+      setMatchCount(10)
     } else if (matchCount < 1) {
-      setMatchCount(1);
+      setMatchCount(1)
     }
-  }, [matchCount]);
+  }, [matchCount])
 
   useEffect(() => {
-    const PG_MATCH_COUNT = localStorage.getItem("PG_MATCH_COUNT");
-    const PG_MODE = localStorage.getItem("PG_MODE");
+    const PG_MATCH_COUNT = localStorage.getItem("PG_MATCH_COUNT")
+    const PG_MODE = localStorage.getItem("PG_MODE")
 
     if (PG_MATCH_COUNT) {
-      setMatchCount(parseInt(PG_MATCH_COUNT));
+      setMatchCount(parseInt(PG_MATCH_COUNT))
     }
 
     if (PG_MODE) {
-      setMode(PG_MODE as "search" | "chat");
+      setMode(PG_MODE as "search" | "chat")
     }
 
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
   // console.log("chunks", chunks);
   return (
     <>
@@ -397,5 +420,5 @@ export default function Home() {
         </div>
       </div>
     </>
-  );
+  )
 }
